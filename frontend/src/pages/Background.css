@@ -1,16 +1,16 @@
-/* Background.css */
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevents scrolling */
+  overflow: hidden; 
 }
 
 .gradient-background {
   background: linear-gradient(to bottom, #aff1da, #f9ea8f);
   display: flex;
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
+  align-items: center; 
+  justify-content: center; 
   min-height: 100vh;
   min-width: 100vw;
   padding: 0;
@@ -20,9 +20,9 @@ html, body {
 
 .card-container {
   width: 100%;
-  max-width: 400px; /* Limits the card size while allowing it to be responsive */
-  padding: 2rem; /* More visible padding */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  background: #fff; /* Ensures card background is white */
-  border-radius: 8px; /* Rounded corners for aesthetics */
+  max-width: 400px; 
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  background: #fff; 
+  border-radius: 8px;
 }

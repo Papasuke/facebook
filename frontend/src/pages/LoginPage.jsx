@@ -10,7 +10,7 @@ const LoginPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    navigate('/dashboard'); // Simulating a navigation
+    navigate('/dashboard');
   };
 
   return (

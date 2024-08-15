@@ -11,7 +11,7 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle registration logic here
+  
   };
 
   return (
