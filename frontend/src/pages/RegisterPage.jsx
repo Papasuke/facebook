@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './RegisterPage.css';
+import axios from 'axios';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -9,9 +10,16 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    const {username, email, password} = data
+    try {
+      const {data} = await axios.post('register', {
+        username, email, password
+      })
+    } catch (error) {
+
+    }
   };
 
   return (
