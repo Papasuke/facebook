@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
 const adminSchema = new Schema({
     username: { type: String, required: true, unique: true, trim: true },
@@ -7,6 +8,5 @@ const adminSchema = new Schema({
     role: { type: String, default: 'admin' }
 });
 
-const Admin = model('User', adminSchema);
-
-export default Admin;
+const Admin = model('admin', adminSchema);
+module.exports = Admin;
