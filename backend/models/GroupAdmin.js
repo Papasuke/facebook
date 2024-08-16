@@ -8,6 +8,6 @@ const GroupAdminSchema = new Schema({
     role: {type: String, default: 'groupAdmin'}
 });
 
-const GroupAdmin = model('GroupAdmin', groupAdminSchema);
+const GroupAdmin = model('GroupAdmin', GroupAdminSchema);
 
 module.exports = GroupAdmin;

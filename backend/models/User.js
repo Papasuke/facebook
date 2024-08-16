@@ -10,6 +10,6 @@ const userSchema = new Schema({
     posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }] // Array to store posts ID
 });
 
-const UserModel = mongoose.model("User", userSchema);
+const User = model("User", userSchema);
 
 module.exports = User;
