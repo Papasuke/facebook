@@ -1,8 +1,8 @@
-const User = require('../models/User');
-const bcrypt = require("bcrypt");
-const { body, validationResult } = require('express-validator');
+import User from '../models/User';
+import { hash } from "bcrypt";
+import { body, validationResult } from 'express-validator';
 
-//Validation user input properties
+// Validation user input properties
 const validateUser = [
   body('username').notEmpty().withMessage('Username is required'),
   body('email').isEmail().withMessage('Invalid email format'),
@@ -19,7 +19,7 @@ const createUser = async (req, res) => {
 
   try {
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hash(password, 10);
 
     const newUser = new User({
       username,
@@ -35,4 +35,4 @@ const createUser = async (req, res) => {
   }
 }
 
-module.exports = { createUser };
+export default { validateUser, createUser };
