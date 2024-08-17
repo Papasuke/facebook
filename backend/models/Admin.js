@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
 
 const adminSchema = new mongoose.Schema({
     username: {type: String, required: true, uq: true},
@@ -8,5 +7,6 @@ const adminSchema = new mongoose.Schema({
     role: {type: String, default: 'admin'}
 });
 
-const Admin = model('admin', adminSchema);
+const Admin = mongoose.model('Admin', adminSchema);
+
 module.exports = Admin;
