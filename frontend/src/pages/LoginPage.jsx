@@ -18,13 +18,13 @@ const LoginPage = () => {
             });
 
             if (response.data.success) {
-                // Check the role of the user
+                
                 const { role, userId } = response.data;
 
                 if (role === 'admin') {
-                    navigate('/admin', { state: { userId } }); // Navigate to admin page if user is admin
+                    navigate('/admin', { state: { userId } }); 
                 } else {
-                    navigate('/post', { state: { userId } }); // Navigate to post creation page for regular users
+                    navigate('/post', { state: { userId } }); 
                 }
             } else {
                 console.error(response.data.message);
