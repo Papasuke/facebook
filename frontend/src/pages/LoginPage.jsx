@@ -1,4 +1,3 @@
-// LoginPage.jsx
 import React, { useState } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +11,27 @@ const LoginPage = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        axios.get('/')
+        try {
+            const response = await axios.post('http://localhost:5000/login', {
+                email,
+                password,
+            });
+
+            if (response.data.success) {
+                // Check the role of the user
+                const { role, userId } = response.data;
+
+                if (role === 'admin') {
+                    navigate('/admin', { state: { userId } }); // Navigate to admin page if user is admin
+                } else {
+                    navigate('/post', { state: { userId } }); // Navigate to post creation page for regular users
+                }
+            } else {
+                console.error(response.data.message);
+            }
+        } catch (error) {
+            console.error('Login Error:', error);
+        }
     };
 
     return (
