@@ -9,7 +9,7 @@ import AdminPage from './pages/AdminPage.jsx';
 import './App.css';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
-import { Navbar } from 'react-bootstrap';
+
 
 axios.defaults.baseURL = 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -17,7 +17,7 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <>
-      <Navbar />
+     
       <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
       <Router>
         <Routes>
