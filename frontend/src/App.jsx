@@ -3,6 +3,8 @@ import LandingPage from './pages/LandingPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RegisterPage from './pages/RegisterPage.jsx';
+import CreatePost from './post/component/CreatePost.jsx'; // Ensure this path is correct
+import PostFeed from './post/component/PostFeed.jsx'; // Import the PostFeed component
 import './App.css';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
@@ -21,6 +23,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/post" element={<CreatePost />} />
+        <Route path="/feed" element={<PostFeed />} /> {/* Add a route for the post feed */}
       </Routes>
     </Router>
     </>

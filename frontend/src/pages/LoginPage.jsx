@@ -1,4 +1,3 @@
-// LoginPage.jsx
 import React, { useState } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +11,21 @@ const LoginPage = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        axios.get('/')
+        try {
+            const response = await axios.post('http://localhost:5000/login', {
+                email,
+                password,
+            });
+
+            if (response.data.success) {
+                // Assuming 'response.data.userId' contains the user's ID
+                navigate('/post', { state: { userId: response.data.userId } });
+            } else {
+                console.error(response.data.message);
+            }
+        } catch (error) {
+            console.error('Login Error:', error);
+        }
     };
 
     return (
