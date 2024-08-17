@@ -31,7 +31,7 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
-        // Add role to the response on successful login
+       
         res.json({ success: true, userId: user._id, role: user.role });
     } catch (error) {
         console.error('Login Error:', error);
