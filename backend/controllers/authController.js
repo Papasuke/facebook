@@ -21,11 +21,25 @@ const registerUser = async (req, res) => {
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 };
-const test = (req, res) => {
-    res.send("Test endpoint is working");
+
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user || user.password !== password) {
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+
+        
+        res.json({ success: true, userId: user._id, role: user.role });
+    } catch (error) {
+        console.error('Login Error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
 };
 
 module.exports = {
-    test,
-    registerUser
+    registerUser,
+    loginUser
 };
