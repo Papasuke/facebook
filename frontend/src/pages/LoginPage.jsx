@@ -18,8 +18,14 @@ const LoginPage = () => {
             });
 
             if (response.data.success) {
-                // Assuming 'response.data.userId' contains the user's ID
-                navigate('/post', { state: { userId: response.data.userId } });
+                // Check the role of the user
+                const { role, userId } = response.data;
+
+                if (role === 'admin') {
+                    navigate('/admin', { state: { userId } }); // Navigate to admin page if user is admin
+                } else {
+                    navigate('/post', { state: { userId } }); // Navigate to post creation page for regular users
+                }
             } else {
                 console.error(response.data.message);
             }
