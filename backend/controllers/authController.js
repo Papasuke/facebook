@@ -31,7 +31,8 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
-        res.json({ success: true, userId: user._id });
+        // Add role to the response on successful login
+        res.json({ success: true, userId: user._id, role: user.role });
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
