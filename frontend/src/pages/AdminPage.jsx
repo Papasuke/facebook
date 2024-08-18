@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
     const [posts, setPosts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -31,11 +33,12 @@ const AdminPage = () => {
     return (
         <div>
             <h1>Welcome to the Admin Page</h1>
+            <button onClick={() => navigate('/manage-account')}>Manage Accounts</button> {/* Button to navigate to ManageAccount */}
             {posts.map(post => (
                 <div key={post._id} className="post">
                     <p>{post.content}</p>
                     <small>by {post.author.username} ({post.author.email})</small>
-                    <button onClick={() => deletePost(post._id)}>Delete Post</button>
+                    <button onClick={() => deletePost(post._id)}>Delete Post</button> {/* Delete Post Feature */}
                 </div>
             ))}
         </div>

@@ -9,6 +9,7 @@ import AdminPage from './pages/AdminPage.jsx';
 import './App.css';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
+import ManageAccount from './pages/ManageAccount.jsx';
 
 
 axios.defaults.baseURL = 'http://localhost:5000';
@@ -17,7 +18,6 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <>
-     
       <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
       <Router>
         <Routes>
@@ -27,6 +27,7 @@ function App() {
           <Route path="/post" element={<CreatePost />} />
           <Route path="/feed" element={<PostFeed />} />
           <Route path="/admin" element={<AdminPage />} /> {}
+          <Route path="/manage-account" element={<ManageAccount />} /> {/* Add the manage account route */}
         </Routes>
       </Router>
     </>

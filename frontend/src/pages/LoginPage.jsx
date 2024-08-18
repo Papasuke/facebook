@@ -3,6 +3,7 @@ import { Card, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import './Background.css';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';  // Import toast for notifications
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -16,24 +17,34 @@ const LoginPage = () => {
                 email,
                 password,
             });
-
+    
             if (response.data.success) {
-                
                 const { role, userId } = response.data;
-
+    
                 if (role === 'admin') {
                     navigate('/admin', { state: { userId } }); 
                 } else {
                     navigate('/post', { state: { userId } }); 
                 }
             } else {
-                console.error(response.data.message);
+                toast.error(response.data.message);
             }
         } catch (error) {
-            console.error('Login Error:', error);
+            // Log only unexpected errors
+            if (error.response && error.response.status !== 403 && error.response.status !== 401) {
+                console.error('Login Error:', error);
+            }
+            // Handle expected errors with appropriate notifications
+            if (error.response && error.response.status === 403) {
+                toast.error('Your account has been suspended.');
+            } else if (error.response && error.response.status === 401) {
+                toast.error('Invalid email or password.');
+            } else {
+                toast.error('Failed to log in. Please try again later.');
+            }
         }
     };
-
+    
     return (
         <div className="gradient-background">
             <div className="card-container">
@@ -41,10 +52,22 @@ const LoginPage = () => {
                     <h2 className="text-center mb-4">LOGIN</h2>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
-                            <Form.Control type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+                            <Form.Control 
+                                type="email" 
+                                placeholder="Email" 
+                                value={email} 
+                                onChange={e => setEmail(e.target.value)} 
+                                required 
+                            />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+                            <Form.Control 
+                                type="password" 
+                                placeholder="Password" 
+                                value={password} 
+                                onChange={e => setPassword(e.target.value)} 
+                                required 
+                            />
                         </Form.Group>
                         <Button variant="primary" type="submit" className="w-100 mb-3">LOGIN</Button>
                         <div className="text-center">
