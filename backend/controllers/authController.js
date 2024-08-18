@@ -82,7 +82,6 @@ const resumeUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        // Fetch only users with the role 'user'
         const users = await User.find({ role: 'user' });
         res.status(200).json(users);
     } catch (error) {

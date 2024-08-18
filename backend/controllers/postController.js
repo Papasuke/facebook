@@ -9,7 +9,7 @@ exports.createPost = async (req, res) => {
     try {
         const post = new Post({ content, author });
         await post.save();
-        await post.populate('author', 'username email');  // Populate more fields as needed
+        await post.populate('author', 'username email');
         res.status(201).json(post);
     } catch (error) {
         console.error('Create Post Error:', error);

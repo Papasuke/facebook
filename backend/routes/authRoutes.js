@@ -7,6 +7,6 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.patch('/suspend/:id', suspendUser);
 router.patch('/resume/:id', resumeUser);
-router.get('/users', getUsers);  // This line is crucial
+router.get('/users', getUsers);
 
 module.exports = router;
