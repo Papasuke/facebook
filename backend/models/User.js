@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+const mongoose = require('mongoose');
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: 'user' },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    isSuspended: { type: Boolean, default: false }  // This field must be correct
 });
 
-const UserModel = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
-module.exports = UserModel;
+module.exports = User;

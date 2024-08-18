@@ -31,7 +31,10 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
-       
+        if (user.isSuspended) {
+            return res.status(403).json({ success: false, message: 'Your account has been suspended.' });
+        }
+
         res.json({ success: true, userId: user._id, role: user.role });
     } catch (error) {
         console.error('Login Error:', error);
@@ -39,7 +42,60 @@ const loginUser = async (req, res) => {
     }
 };
 
+
+
+const suspendUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`Suspending user with ID: ${id}`);
+
+        const user = await User.findByIdAndUpdate(id, { isSuspended: true }, { new: true });
+        console.log(`Updated user: ${user}`);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User suspended successfully', user });
+    } catch (error) {
+        console.error('Error suspending user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+
+const resumeUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByIdAndUpdate(id, { isSuspended: false }, { new: true });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ message: 'User resumed successfully', user });
+    } catch (error) {
+        console.error('Error resuming user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const getUsers = async (req, res) => {
+    try {
+        // Fetch only users with the role 'user'
+        const users = await User.find({ role: 'user' });
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    suspendUser,
+    resumeUser,
+    getUsers,
 };
