@@ -27,7 +27,7 @@ function App() {
           <Route path="/post" element={<CreatePost />} />
           <Route path="/feed" element={<PostFeed />} />
           <Route path="/admin" element={<AdminPage />} /> {}
-          <Route path="/manage-account" element={<ManageAccount />} /> {/* Add the manage account route */}
+          <Route path="/manage-account" element={<ManageAccount />} /> {}
         </Routes>
       </Router>
     </>

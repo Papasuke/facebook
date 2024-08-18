@@ -33,12 +33,12 @@ const AdminPage = () => {
     return (
         <div>
             <h1>Welcome to the Admin Page</h1>
-            <button onClick={() => navigate('/manage-account')}>Manage Accounts</button> {/* Button to navigate to ManageAccount */}
+            <button onClick={() => navigate('/manage-account')}>Manage Accounts</button> {}
             {posts.map(post => (
                 <div key={post._id} className="post">
                     <p>{post.content}</p>
                     <small>by {post.author.username} ({post.author.email})</small>
-                    <button onClick={() => deletePost(post._id)}>Delete Post</button> {/* Delete Post Feature */}
+                    <button onClick={() => deletePost(post._id)}>Delete Post</button> {}
                 </div>
             ))}
         </div>

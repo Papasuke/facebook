@@ -8,8 +8,7 @@ const ManageAccount = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/users'); // This will now only return users with role 'user'
-                setUsers(data);
+                const { data } = await axios.get('http://localhost:5000/users');
             } catch (error) {
                 console.error('Error fetching users:', error);
                 toast.error('Failed to fetch users.');

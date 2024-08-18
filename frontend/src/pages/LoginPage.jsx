@@ -30,11 +30,11 @@ const LoginPage = () => {
                 toast.error(response.data.message);
             }
         } catch (error) {
-            // Log only unexpected errors
+         
             if (error.response && error.response.status !== 403 && error.response.status !== 401) {
                 console.error('Login Error:', error);
             }
-            // Handle expected errors with appropriate notifications
+          
             if (error.response && error.response.status === 403) {
                 toast.error('Your account has been suspended.');
             } else if (error.response && error.response.status === 401) {
