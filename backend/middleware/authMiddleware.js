@@ -1,22 +1,21 @@
+// authMiddleware.js
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.headers['authorization']?.split(' ')[1]; // Extract token from 'Bearer token'
 
     if (!token) {
-        return res.status(401).json({ error: 'Access denied. No token provided.' });
+        return res.status(401).json({ error: 'No token provided' });
     }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Attach user data to request object
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+
+        req.user = decoded; // Add decoded token data to req.user
         next();
-    } catch (error) {
-        res.status(400).json({ error: 'Invalid token.' });
-    }
+    });
 };
 
 module.exports = authMiddleware;

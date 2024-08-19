@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // JWT library
 
 // Reusable function to check user by email
 const findUserByEmail = async (email) => {
@@ -21,7 +22,8 @@ const registerUser = async (req, res) => {
             return res.status(409).json({ error: 'Email already in use' });
         }
 
-        const user = new User({ username, email, password, role });
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash password
+        const user = new User({ username, email, password: hashedPassword, role });
         await user.save();
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
@@ -36,7 +38,7 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
         const user = await findUserByEmail(email);
 
-        if (!user || user.password !== password) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
@@ -44,7 +46,11 @@ const loginUser = async (req, res) => {
             return res.status(403).json({ success: false, message: 'Your account has been suspended.' });
         }
 
-        res.json({ success: true, userId: user._id, role: user.role });
+        // Create JWT token
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '2h' });
+
+        // Send token and user information to frontend
+        res.json({ success: true, token, userId: user._id, role: user.role });
     } catch (error) {
         console.error('Login Error:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -105,6 +111,10 @@ const updateUserProfile = async (req, res) => {
             user.password = await bcrypt.hash(password, 10);
         }
 
+        if (email) {
+            user.email = email;
+        }
+
         await user.save();
         res.status(200).json({ message: 'Profile updated successfully', user });
     } catch (error) {
@@ -113,6 +123,23 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+// Get friend list by email
+const getFriendListByEmail = async (email) => {
+    try {
+        const user = await User.findOne({ email })
+            .populate('friendList', 'email')
+            .populate('pendingFriends', 'email'); // Populate both lists
+
+        if (!user) {
+            return { error: 'User not found' };
+        }
+
+        return { friends: user.friendList, pendingFriends: user.pendingFriends };
+    } catch (error) {
+        console.error('Error getting friend list by email:', error);
+        return { error: 'An error occurred while fetching the friend list' };
+    }
+};
 
 module.exports = {
     registerUser, // Register user
@@ -121,4 +148,5 @@ module.exports = {
     resumeUser, // Resume user
     getUsers, // Get users
     updateUserProfile, // Update user profile
+    getFriendListByEmail // Get friend list by email
 };

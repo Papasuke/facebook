@@ -24,7 +24,7 @@ router.patch('/suspend/:id', authMiddleware, suspendUser);
 // Resume user
 router.patch('/resume/:id', authMiddleware, resumeUser);
 
-// get all users with "user" role
+// Get all users with "user" role
 router.get('/users', authMiddleware, getUsers);
 
 // Update user profile
