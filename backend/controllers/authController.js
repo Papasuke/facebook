@@ -1,18 +1,26 @@
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
+// Reusable function to check user by email
+const findUserByEmail = async (email) => {
+    try {
+        return await User.findOne({ email });
+    } catch (error) {
+        console.error('Error finding user by email:', error);
+        return null;
+    }
+};
+
+// Register a new user
 const registerUser = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
-        if (!username || !email || !password) {
-            return res.status(400).json({ error: 'All fields are required' });
-        }
-        if (password.length < 6) {
-            return res.status(400).json({ error: 'Password must be at least 6 characters long' });
-        }
-        const existingUser = await User.findOne({ email });
+
+        const existingUser = await findUserByEmail(email);
         if (existingUser) {
             return res.status(409).json({ error: 'Email already in use' });
         }
+
         const user = new User({ username, email, password, role });
         await user.save();
         res.status(201).json({ message: 'User registered successfully', user });
@@ -22,10 +30,11 @@ const registerUser = async (req, res) => {
     }
 };
 
+// Login user
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await findUserByEmail(email);
 
         if (!user || user.password !== password) {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
@@ -42,44 +51,33 @@ const loginUser = async (req, res) => {
     }
 };
 
-
-
-const suspendUser = async (req, res) => {
+// Suspend a user
+const updateUserStatus = async (req, res, isSuspended) => {
     try {
         const { id } = req.params;
-        console.log(`Suspending user with ID: ${id}`);
-
-        const user = await User.findByIdAndUpdate(id, { isSuspended: true }, { new: true });
-        console.log(`Updated user: ${user}`);
+        const user = await User.findByIdAndUpdate(id, { isSuspended }, { new: true });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.status(200).json({ message: 'User suspended successfully', user });
+        res.status(200).json({
+            message: isSuspended ? 'User suspended successfully' : 'User resumed successfully',
+            user
+        });
     } catch (error) {
-        console.error('Error suspending user:', error);
+        console.error('Error updating user status:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
+// Suspend a user
+const suspendUser = (req, res) => updateUserStatus(req, res, true);
 
+// Resume a user
+const resumeUser = (req, res) => updateUserStatus(req, res, false);
 
-
-const resumeUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = await User.findByIdAndUpdate(id, { isSuspended: false }, { new: true });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        res.status(200).json({ message: 'User resumed successfully', user });
-    } catch (error) {
-        console.error('Error resuming user:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
+// Get all users
 const getUsers = async (req, res) => {
     try {
         const users = await User.find({ role: 'user' });
@@ -90,11 +88,37 @@ const getUsers = async (req, res) => {
     }
 };
 
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (password) {
+            if (password.length < 6) {
+                return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+            }
+            user.password = await bcrypt.hash(password, 10);
+        }
+
+        await user.save();
+        res.status(200).json({ message: 'Profile updated successfully', user });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 module.exports = {
-    registerUser,
-    loginUser,
-    suspendUser,
-    resumeUser,
-    getUsers,
+    registerUser, // Register user
+    loginUser, // Login user
+    suspendUser, // Suspend user
+    resumeUser, // Resume user
+    getUsers, // Get users
+    updateUserProfile, // Update user profile
 };
