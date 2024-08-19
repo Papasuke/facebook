@@ -57,7 +57,6 @@ const loginUser = async (req, res) => {
     }
 };
 
-// Suspend a user
 const updateUserStatus = async (req, res, isSuspended) => {
     try {
         const { id } = req.params;
