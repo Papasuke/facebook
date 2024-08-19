@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
-
+import { useLocation, useNavigate } from 'react-router-dom'; 
 const CreatePost = () => {
     const [content, setContent] = useState('');
     const location = useLocation();
-    const { userId } = location.state;  // Get the userId from state
-    const navigate = useNavigate(); // Initialize useNavigate
-
+    const { userId } = location.state; 
+    const navigate = useNavigate(); 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -29,9 +27,9 @@ const CreatePost = () => {
         }
     };
 
-    // Function to navigate to the PostFeed page
+
     const handleViewPosts = () => {
-        navigate('/feed'); // Navigate to the /feed route
+        navigate('/feed');
     };
 
     return (
@@ -40,7 +38,7 @@ const CreatePost = () => {
                 <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="What's on your mind?" />
                 <button type="submit">Post</button>
             </form>
-            <button onClick={handleViewPosts} style={{ marginTop: '10px' }}>View Posts</button> {/* Add the button */}
+            <button onClick={handleViewPosts} style={{ marginTop: '10px' }}>View Posts</button> {}
         </div>
     );
 };

@@ -5,11 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import RegisterPage from './pages/RegisterPage.jsx';
 import CreatePost from './post/component/CreatePost.jsx';
 import PostFeed from './post/component/PostFeed.jsx';
-import AdminPage from './pages/AdminPage.jsx'; // Import the AdminPage component
+import AdminPage from './pages/AdminPage.jsx';
 import './App.css';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
-import { Navbar } from 'react-bootstrap';
+import ManageAccount from './pages/ManageAccount.jsx';
+
 
 axios.defaults.baseURL = 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -17,7 +18,6 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <>
-      <Navbar />
       <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
       <Router>
         <Routes>
@@ -26,7 +26,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/post" element={<CreatePost />} />
           <Route path="/feed" element={<PostFeed />} />
-          <Route path="/admin" element={<AdminPage />} /> {/* Add the admin route */}
+          <Route path="/admin" element={<AdminPage />} /> {}
+          <Route path="/manage-account" element={<ManageAccount />} /> {}
         </Routes>
       </Router>
     </>

@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
-const postRoutes = require('./routes/postRoutes'); // Make sure this is required
+const postRoutes = require('./routes/postRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
