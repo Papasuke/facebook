@@ -1,18 +1,24 @@
-// src/components/Post.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactComponent as LikeIcon } from 'assets/icons/like.svg';
 import { ReactComponent as LoveIcon } from 'assets/icons/love.svg';
 import { ReactComponent as HahaIcon } from 'assets/icons/happy.svg';
 import { ReactComponent as AngryIcon } from 'assets/icons/angry.svg';
 
-const Post = ({ post, onUpdatePost }) => {
+const PostFeed = ({ post, onUpdatePost }) => {
     const [comments, setComments] = useState(post.comments || []);
     const [newComment, setNewComment] = useState('');
-    const [reaction, setReaction] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editContent, setEditContent] = useState(post.content);
+    const [reaction, setReaction] = useState(post.reaction || null);
+    const [isEditingPost, setIsEditingPost] = useState(false);
+    const [editPostContent, setEditPostContent] = useState(post.content);
+    const [editCommentId, setEditCommentId] = useState(null);
+    const [editCommentContent, setEditCommentContent] = useState('');
+
+    useEffect(() => {
+        setEditPostContent(post.content);
+        setReaction(post.reaction);
+    }, [post]);
 
     const handleReaction = async (newReaction) => {
         try {
@@ -42,32 +48,56 @@ const Post = ({ post, onUpdatePost }) => {
         }
     };
 
-    const handleEditClick = () => {
-        setIsEditing(true);
+    const handleEditPostClick = () => {
+        setIsEditingPost(true);
     };
 
-    const handleSaveEdit = async () => {
+    const handleSavePostEdit = async () => {
         try {
             const response = await axios.put(`http://localhost:5000/posts/${post._id}`, {
-                newContent: editContent
+                newContent: editPostContent
             });
             onUpdatePost(response.data);
-            setIsEditing(false);
+            setIsEditingPost(false);
         } catch (error) {
             console.error('Failed to edit post', error);
+        }
+    };
+
+    const handleEditCommentChange = (e) => {
+        setEditCommentContent(e.target.value);
+    };
+
+    const handleEditCommentClick = (commentId, commentContent) => {
+        setEditCommentId(commentId);
+        setEditCommentContent(commentContent);
+    };
+
+    const handleSaveCommentEdit = async (commentId) => {
+        try {
+            const response = await axios.put(`http://localhost:5000/comments/${commentId}`, {
+                newContent: editCommentContent
+            });
+            setComments(comments.map(comment =>
+                comment._id === commentId ? response.data : comment
+            ));
+            setEditCommentId(null);
+            setEditCommentContent('');
+        } catch (error) {
+            console.error('Failed to edit comment', error);
         }
     };
 
     return (
         <div className="post">
             <h3>{post.author.username}</h3>
-            {isEditing ? (
+            {isEditingPost ? (
                 <div>
                     <textarea
-                        value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
+                        value={editPostContent}
+                        onChange={(e) => setEditPostContent(e.target.value)}
                     />
-                    <button onClick={handleSaveEdit}>Save</button>
+                    <button onClick={handleSavePostEdit}>Save</button>
                 </div>
             ) : (
                 <p>{post.content}</p>
@@ -92,9 +122,22 @@ const Post = ({ post, onUpdatePost }) => {
             </div>
             <div className="comments">
                 <h4>Comments</h4>
-                {comments.map((comment, index) => (
-                    <div key={index}>
-                        <p><strong>{comment.author}</strong> {comment.content}</p>
+                {comments.map((comment) => (
+                    <div key={comment._id}>
+                        {editCommentId === comment._id ? (
+                            <div>
+                                <textarea
+                                    value={editCommentContent}
+                                    onChange={handleEditCommentChange}
+                                />
+                                <button onClick={() => handleSaveCommentEdit(comment._id)}>Save</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p><strong>{comment.author}</strong> {comment.content}</p>
+                                <button onClick={() => handleEditCommentClick(comment._id, comment.content)}>Edit</button>
+                            </div>
+                        )}
                     </div>
                 ))}
                 <textarea
@@ -104,23 +147,9 @@ const Post = ({ post, onUpdatePost }) => {
                 />
                 <button onClick={handleAddComment}>Add Comment</button>
             </div>
-            <div className="history">
-                <h4>Edit History</h4>
-                {post.editTimestamps && post.editTimestamps.length > 0 ? (
-                    <ul>
-                        {post.editTimestamps.map((timestamp, index) => (
-                            <li key={index}>
-                                <p>{post.editContents[index]} (Edited on: {new Date(timestamp).toLocaleString()})</p>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No edit history available.</p>
-                )}
-            </div>
-            {!isEditing && <button onClick={handleEditClick}>Edit Post</button>}
+            {!isEditingPost && <button onClick={handleEditPostClick}>Edit Post</button>}
         </div>
     );
 };
 
-export default Post;
+export default PostFeed;
