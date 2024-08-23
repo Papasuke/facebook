@@ -5,6 +5,18 @@ import './Background.css';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+const InputField = ({ type, placeholder, value, onChange }) => (
+    <Form.Group className="mb-3">
+        <Form.Control 
+            type={type} 
+            placeholder={placeholder} 
+            value={value} 
+            onChange={onChange} 
+            required 
+        />
+    </Form.Group>
+);
+
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -34,18 +46,6 @@ const LoginPage = () => {
         event.preventDefault();
         handleLogin(email, password);
     };
-
-    const InputField = ({ type, placeholder, value, onChange }) => (
-        <Form.Group className="mb-3">
-            <Form.Control 
-                type={type} 
-                placeholder={placeholder} 
-                value={value} 
-                onChange={onChange} 
-                required 
-            />
-        </Form.Group>
-    );
 
     return (
         <div className="gradient-background">

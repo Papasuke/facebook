@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -11,9 +11,25 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('user');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check for empty fields
+        if (!username || !email || !password) {
+            toast.error('Please fill out all fields');
+            return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
+        setIsLoading(true);
 
         try {
             const { data } = await axios.post('http://localhost:5000/register', {
@@ -29,6 +45,8 @@ const RegisterPage = () => {
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to register. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -41,21 +59,45 @@ const RegisterPage = () => {
                             <h2 className="text-center mb-4">REGISTER</h2>
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3">
-                                    <Form.Control type="text" placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                    />
                                 </Form.Group>
                                 <Form.Group className="mb-3">
-                                    <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <Form.Control
+                                        type="email"
+                                        placeholder="Enter email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
                                 </Form.Group>
                                 <Form.Group className="mb-3">
-                                    <Form.Control type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
                                 </Form.Group>
                                 <Form.Group className="mb-3">
-                                    <Form.Select value={role} onChange={(e) => setRole(e.target.value)}>
+                                    <Form.Select
+                                        value={role}
+                                        onChange={(e) => setRole(e.target.value)}
+                                    >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                     </Form.Select>
                                 </Form.Group>
-                                <Button type="submit" className="w-100 btn-dark">Register</Button>
+                                <Button
+                                    type="submit"
+                                    className="w-100 btn-dark"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? <Spinner animation="border" size="sm" /> : 'Register'}
+                                </Button>
                             </Form>
                             <div className="text-center mt-3">
                                 <Link to="/login">Already have an account? Login</Link>
