@@ -1,33 +1,12 @@
 const express = require('express');
-const { 
-    registerUser, 
-    loginUser, 
-    suspendUser, 
-    resumeUser, 
-    getUsers, 
-    updateUserProfile 
-} = require('../controllers/authController');
-const { validateFields } = require('../middleware/validationMiddleware');
-const authMiddleware = require('../middleware/authMiddleware');
+const { registerUser, loginUser, suspendUser, resumeUser, getUsers } = require('../controllers/authController');
 
 const router = express.Router();
 
-// Register
-router.post('/register', validateFields, registerUser);
-
-// Login user
+router.post('/register', registerUser);
 router.post('/login', loginUser);
-
-// Suspend user
-router.patch('/suspend/:id', authMiddleware, suspendUser);
-
-// Resume user
-router.patch('/resume/:id', authMiddleware, resumeUser);
-
-// Get all users with "user" role
-router.get('/users', authMiddleware, getUsers);
-
-// Update user profile
-router.post('/update-profile', authMiddleware, updateUserProfile);
+router.patch('/suspend/:id', suspendUser);
+router.patch('/resume/:id', resumeUser);
+router.get('/users', getUsers);
 
 module.exports = router;
