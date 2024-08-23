@@ -30,15 +30,20 @@ const AdminPage = () => {
         }
     };
 
+    const handleGroupRequests = () => {
+        navigate('/group-requests');
+    };
+
     return (
         <div>
             <h1>Welcome to the Admin Page</h1>
-            <button onClick={() => navigate('/manage-account')}>Manage Accounts</button> {}
+            <button onClick={() => navigate('/manage-account')}>Manage Accounts</button>
+            <button onClick={handleGroupRequests} style={{ marginLeft: '10px' }}>Group Creation Requests</button> {/* New button */}
             {posts.map(post => (
                 <div key={post._id} className="post">
                     <p>{post.content}</p>
                     <small>by {post.author.username} ({post.author.email})</small>
-                    <button onClick={() => deletePost(post._id)}>Delete Post</button> {}
+                    <button onClick={() => deletePost(post._id)}>Delete Post</button>
                 </div>
             ))}
         </div>

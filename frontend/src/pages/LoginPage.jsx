@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 const InputField = ({ type, placeholder, value, onChange }) => (
     <Form.Group className="mb-3">
         <Form.Control 
-            type={type} 
+            type={type}
             placeholder={placeholder} 
             value={value} 
             onChange={onChange} 

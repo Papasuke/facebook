@@ -10,7 +10,8 @@ import './App.css';
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
 import ManageAccount from './pages/ManageAccount.jsx';
-
+import CreateGroup from './post/component/CreateGroup.jsx';
+import GroupCreationRequestPage from './pages/GroupCreationRequestPage.jsx';
 
 axios.defaults.baseURL = 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -26,8 +27,10 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/post" element={<CreatePost />} />
           <Route path="/feed" element={<PostFeed />} />
-          <Route path="/admin" element={<AdminPage />} /> {}
-          <Route path="/manage-account" element={<ManageAccount />} /> {}
+          <Route path="/admin" element={<AdminPage />} /> 
+          <Route path="/manage-account" element={<ManageAccount />} />
+          <Route path="/create-group" element={<CreateGroup />} />
+          <Route path="/group-requests" element={<GroupCreationRequestPage />} />
         </Routes>
       </Router>
     </>
