@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const groupAdminRoutes = require('./routes/groupAdminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,5 +22,6 @@ app.use('/comments', commentRoutes);
 
 app.use('/', authRoutes);
 app.use('/posts', postRoutes);
+app.use('/groups', groupAdminRoutes);
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
