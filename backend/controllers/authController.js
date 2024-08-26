@@ -1,5 +1,15 @@
 const User = require('../models/User');
 
+const findUserByEmail = async (email) => {
+    try {
+        const user = await User.findOne({ email });
+        return user;
+    } catch (error) {
+        console.error('Error finding user by email:', error);
+        throw new Error('Internal server error');
+    }
+};
+
 const registerUser = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
