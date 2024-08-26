@@ -9,22 +9,27 @@ const CreateGroup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const authToken = localStorage.getItem('authToken'); // Get the auth token
+            const authToken = localStorage.getItem('authToken');
 
             const response = await axios.post('/groups/create', {
                 groupName,
                 description: groupDescription,
             }, {
                 headers: {
-                    Authorization: `Bearer ${authToken}` // Include the authToken in the request headers
+                    Authorization: `Bearer ${authToken}`
                 }
             });
+
             setMessage(response.data.message);
             setGroupName('');
             setGroupDescription('');
         } catch (error) {
             console.error('Failed to create group', error);
-            setMessage('Error creating group, please try again');
+            if (error.response && error.response.data) {
+                setMessage(error.response.data.message || 'Error creating group, please try again');
+            } else {
+                setMessage('Error creating group, please try again');
+            }
         }
     };
 

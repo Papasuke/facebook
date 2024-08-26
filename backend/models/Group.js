@@ -1,7 +1,14 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const GroupSchema = new Schema({
-    groupName: {type: String, required: true, uq: true},
-    admin: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    memberList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],  // Array for group members
+const groupSchema = new Schema({
+    groupName: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
+    status: { type: String, enum: ['pending', 'approved', 'failed'], default: 'pending' },
+    createdAt: { type: Date, default: Date.now },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 });
+
+const Group = mongoose.model('Group', groupSchema);
+
+module.exports = Group;
