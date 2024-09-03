@@ -18,9 +18,9 @@ const CommentList = ({ postId }) => {
     }, [postId]);
 
     return (
-        <div className="comments">
+        <div className="comments-container">
             {comments.map(comment => (
-                <div key={comment._id} className="comment">
+                <div key={comment._id} className="comment-bubble">
                     <p>{comment.content}</p>
                     <small>by {comment.author?.username} ({comment.author?.email})</small>
                 </div>

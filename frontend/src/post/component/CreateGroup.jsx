@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from 'axios';
+import './CreateGroup.css';
 
 const CreateGroup = () => {
     const [groupName, setGroupName] = useState('');
@@ -34,29 +35,35 @@ const CreateGroup = () => {
     };
 
     return (
-        <div>
-            <h2>Create a Group</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Group Name:</label>
-                    <input
-                        type="text"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Group Description:</label>
-                    <textarea
-                        value={groupDescription}
-                        onChange={(e) => setGroupDescription(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Request to Create Group</button>
-            </form>
-            {message && <p>{message}</p>}
+        <div className="create-group-container">
+            <div className="create-group-card">
+                <h2>Create a Group</h2>
+                <form onSubmit={handleSubmit} className="create-group-form">
+                    <div className="form-group">
+                        <label htmlFor="groupName">Group Name:</label>
+                        <input
+                            type="text"
+                            id="groupName"
+                            value={groupName}
+                            onChange={(e) => setGroupName(e.target.value)}
+                            required
+                            className="input-field"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="groupDescription">Group Description:</label>
+                        <textarea
+                            id="groupDescription"
+                            value={groupDescription}
+                            onChange={(e) => setGroupDescription(e.target.value)}
+                            required
+                            className="textarea-field"
+                        />
+                    </div>
+                    <button type="submit" className="submit-button">Request to Create Group</button>
+                </form>
+                {message && <p className="response-message">{message}</p>}
+            </div>
         </div>
     );
 };
