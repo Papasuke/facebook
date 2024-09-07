@@ -16,21 +16,22 @@ const {
     getGroups
     
 } = require('../controllers/groupAdminController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/create', createGroup); // check
-router.post ('/member-request', postMemberRequest); // check
-router.get('/pending-member-requests', getPendingMemberRequests); // check
-router.post('/approve-member-request', approveMemberRequest); // check
-router.get('/group-creation-requests', getGroupCreationRequests); //check
-router.post('/approve-group-creation-request', approveGroupCreationRequest); // check
-router.get('/members', getGroupMembers); // check
-router.delete('/remove-member', removeMember); // check
-router.post('/post', postGroupPost); // check
-router.delete('/post', removeGroupPosts); // check
-router.post('/comment', postGroupComment); // check
-router.delete('/comment', removeGroupComments); // check
-router.get('/posts', getGroupPosts); // check
-router.get('/groups', getGroups); // check
+router.post('/create', authMiddleware, createGroup); //  (conflit with groupRoutes)
+router.post ('/member-request', authMiddleware, postMemberRequest); // 
+router.get('/pending-member-requests/:groupId', authMiddleware, getPendingMemberRequests); // 
+router.post('/approve-member-request', authMiddleware, approveMemberRequest); // 
+router.get('/group-creation-requests', authMiddleware, getGroupCreationRequests); // (conflict with groupRoutes)
+router.post('/approve-group-creation-request', authMiddleware, approveGroupCreationRequest); //  (conflict with groupRoutes)
+router.get('/members/:groupId', authMiddleware, getGroupMembers); // 
+router.post('/remove-member', authMiddleware, removeMember); // 
+router.post('/post', authMiddleware, postGroupPost); // (maybe conflict with postRoutes)
+router.get('/posts/:groupId', authMiddleware, getGroupPosts); // (maybe conflict with postRoutes)
+router.post('/remove-post', authMiddleware, removeGroupPosts); // 
+router.post('/comment', authMiddleware, postGroupComment); // (maybe conflict with postRoutes)
+router.post('/post-comment', authMiddleware, removeGroupComments); // 
+router.get('/groups', authMiddleware, getGroups); // 
 module.exports = router;

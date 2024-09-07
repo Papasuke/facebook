@@ -1,21 +1,13 @@
-// authMiddleware.js
-const jwt = require('jsonwebtoken');
-
 const authMiddleware = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1]; // Extract token from 'Bearer token'
-
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+    if (req.session.userId) {
+        req.user = {
+            id: req.session.userId,
+            role: req.session.role
+        };
+        next(); // User is authenticated
+    } else {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid token' });
-        }
-
-        req.user = decoded; // Add decoded token data to req.user
-        next();
-    });
 };
 
 module.exports = authMiddleware;

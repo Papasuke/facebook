@@ -9,12 +9,15 @@ const User = require('../models/User');
 //     "visibility": "private",
 //     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
+// conflic with GroupController
 exports.createGroup = async (req, res) => {
-    const { name, visibility, userAdminId } = req.body;
-
-    console.log('Creating group:', req.body);
     // Default group visibility is private, status is pending for the app admin to approve
     try {
+        const { name, visibility } = req.body;
+        const userAdminId = req.user.id;
+    
+        console.log('Creating group:', req.body);
+
         const group = new Group({ name, visibility, admin: userAdminId });
         await group.save();
         res.status(201).json({ message: 'Group created successfully' });
@@ -24,15 +27,15 @@ exports.createGroup = async (req, res) => {
     }
 };
 
-// POST a new member request
+// POST a new member request (the user is requesting to join a group)
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userMemberId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
 exports.postMemberRequest = async (req, res) => {
-    const { groupId, userMemberId } = req.body;
-
     try {
+        const { groupId } = req.body;
+        const userMemberId = req.user.id;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -47,7 +50,7 @@ exports.postMemberRequest = async (req, res) => {
         if (!group.pendingMembers.includes(userMemberId)) {
             group.pendingMembers.push(userMemberId);
             await group.save();
-            return res.status(200).json({ message: 'Member request sent'});
+            return res.status(200).json({ message: 'Member request sent' });
         } else {
             return res.status(400).json({ error: 'User has already sent a request' });
         }
@@ -58,14 +61,12 @@ exports.postMemberRequest = async (req, res) => {
 };
 
 // GET pending member requests
-// {
-//     "groupId": "66c3851ba370585cd76f7277",
-//     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3b3"
-// }
 exports.getPendingMemberRequests = async (req, res) => {
-    const { groupId, userAdminId } = req.body;
-
     try {
+        // const { groupId, userAdminId } = req.body;
+        const userAdminId = req.user.id;
+        const { groupId } = req.params;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -87,14 +88,14 @@ exports.getPendingMemberRequests = async (req, res) => {
 // Approve or decline member requests
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3b3",
 //     "userMemberId": "60b9b3b3b3b3b3b3b3b3b3b3",
 //     "approveMemberRequest": true // Boolean value to approve or decline member request
 // }
 exports.approveMemberRequest = async (req, res) => {
-    const { groupId, userAdminId, userMemberId, approveMemberRequest } = req.body;
-
     try {
+        const { groupId, userMemberId, approveMemberRequest } = req.body;
+        const userAdminId = req.user.id;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -110,7 +111,7 @@ exports.approveMemberRequest = async (req, res) => {
             await group.save();
             return res.status(200).json({ message: 'Member request declined' });
         }
-        
+
         if (!group.memberList.includes(userMemberId)) {
             group.memberList.push(userMemberId);
             group.pendingMembers = group.pendingMembers.filter(member => member.toString() !== userMemberId);
@@ -129,10 +130,10 @@ exports.approveMemberRequest = async (req, res) => {
 // {
 //     "adminId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
+// conflic with GroupController
 exports.getGroupCreationRequests = async (req, res) => {
-    const {adminId} = req.body;
-
     try {
+        const { adminId } = req.body;
         // const admin = await Admin.findById(adminId);
         // if (!admin) {
         //     return res.status(404).json({ error: 'Admin not found (unauthorize access)' });
@@ -152,17 +153,17 @@ exports.getGroupCreationRequests = async (req, res) => {
 //     "adminId": "60b9b3b3b3b3b3b3b3b3b3b3",
 //     "approveGroupCreationRequest": true // Boolean value to approve or decline group creation request
 // }
+// conflic with GroupController
 exports.approveGroupCreationRequest = async (req, res) => {
-    const { groupId, adminId, approveGroupCreationRequest} = req.body;
-    console.log('Approving group creation request:', req.body);
-
     try {
+        const { groupId, adminId, approveGroupCreationRequest } = req.body;
+        console.log('Approving group creation request:', req.body);
         // const admin = await Admin.findById(adminId);
         // if (!admin) {
         //     return res.status(404).json({ error: 'Admin not found (unauthorize access)' });
         // }
 
-        
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -177,7 +178,7 @@ exports.approveGroupCreationRequest = async (req, res) => {
         if (group.status === 'approved') {
             return res.status(400).json({ error: 'Group is already active' });
         }
-        
+
         group.status = 'approved';
         await group.save();
         res.status(200).json({ message: 'Group creation request approved' });
@@ -193,9 +194,11 @@ exports.approveGroupCreationRequest = async (req, res) => {
 //     "userId": "60b9b3b3b3b3b3b3b3b3b3b3" // User ID of the user making the request can be admin or member
 // }
 exports.getGroupMembers = async (req, res) => {
-    const { groupId, userId } = req.body;
-
     try {
+        // const { groupId, userId } = req.body;
+        const userId = req.user.id;
+        const { groupId } = req.params;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -220,13 +223,13 @@ exports.getGroupMembers = async (req, res) => {
 // Remove members from group
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3",
 //     "userMemberId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
 exports.removeMember = async (req, res) => {
-    const { groupId, userAdminId, userMemberId } = req.body;
-
     try {
+        const { groupId, userMemberId } = req.body;
+        const userAdminId = req.user.id;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -249,13 +252,14 @@ exports.removeMember = async (req, res) => {
 // POST a new post to a group
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userAuthorId": "60b9b3b3b3b3b3b3b3b3b3", // User author can be admin or member
 //     "content": "Post content"
 // }
+// maybe conflic with GroupController
 exports.postGroupPost = async (req, res) => {
-    const { groupId, userAuthorId, content } = req.body;
-
     try {
+        const { groupId, content } = req.body;
+        const userAuthorId = req.user.id;  // User author can be admin or member
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -280,13 +284,13 @@ exports.postGroupPost = async (req, res) => {
 // Remove group posts
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3b3",
 //     "postId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
 exports.removeGroupPosts = async (req, res) => {
-    const { groupId, userAdminId, postId} = req.body;
-
     try {
+        const { groupId, postId } = req.body;
+        const userAdminId = req.user.id;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -316,14 +320,15 @@ exports.removeGroupPosts = async (req, res) => {
 // POST a new comment to a group post
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "userAuthorId": "60b9b3b3b3b3b3b3b3b3b3", // User author can be admin or member
 //     "postId": "60b9b3b3b3b3b3b3b3b3b3b3",
 //     "content": "Comment content"
 // }
+// maybe conflic with GroupController
 exports.postGroupComment = async (req, res) => {
-    const { groupId, userAuthorId, postId, content } = req.body;
-
     try {
+        const { groupId, postId, content } = req.body;
+        const userAuthorId = req.user.id;  // User author can be admin or member
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -363,13 +368,13 @@ exports.postGroupComment = async (req, res) => {
 // Remove group comments
 // {
 //     "groupId": "66c3851ba370585cd76f7277",
-//     "commentId": "60b9b3b3b3b3b3b3b3b3b3b3",
-//     "userAdminId": "60b9b3b3b3b3b3b3b3b3b3b3"
+//     "commentId": "60b9b3b3b3b3b3b3b3b3b3b3"
 // }
 exports.removeGroupComments = async (req, res) => {
-    const { groupId, commentId, userAdminId} = req.body;
-
     try {
+        const { groupId, commentId } = req.body;
+        const userAdminId = req.user.id;
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -401,13 +406,14 @@ exports.removeGroupComments = async (req, res) => {
 
 // GET posts and comment from a group
 // {
-//     "groupId": "66c3851ba370585cd76f7277",
-//     "userId": "60b9b3b3b3b3b3b3b3b3b3b3" // User ID of the user making the request can be admin or member
+//     "groupId": "66c3851ba370585cd76f7277"
 // }
+// maybe conflic with GroupController
 exports.getGroupPosts = async (req, res) => {
-    const { groupId, userId } = req.body;
-
     try {
+        const { groupId } = req.params;
+        const userId = req.user.id; // User ID of the user making the request can be admin or member
+
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: 'Group not found' });
@@ -434,7 +440,11 @@ exports.getGroupPosts = async (req, res) => {
 
 // GET list of groups
 exports.getGroups = async (req, res) => {
+
     try {
+        const user_id = req.user.id;
+        console.log('User ID:', user_id);
+
         const groups = await Group.find();
         res.status(200).json(groups);
     } catch (error) {
